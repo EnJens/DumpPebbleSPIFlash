@@ -32,7 +32,7 @@ int main(void) {
         int bytes_left = DUMP_END - addr;
         int step_bytes = bytes_left < BATCH_SIZE ? bytes_left : BATCH_SIZE;
 
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Dumping from offset 0x%X", addr);
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Dumping %d bytes from offset 0x%X", step_bytes, addr);
         // Enable GPIOA, SPI1
         RCC->APB2ENR |= (uint32_t)(1<<12);
         RCC->AHB1ENR |= (uint32_t)(1<<0);
@@ -54,24 +54,26 @@ int main(void) {
         // SPE=1
         SPI1->CR1 |= 0x40;
 
-        GPIOA->BSRRL = (1<<4);
-        GPIOA->BSRRH = (1<<4);
-
-        SendData(0x3); // Read command
-        // Address to read from
-        SendData((addr & 0xFF0000) >> 16);
-        SendData((addr & 0x00FF00) >> 8);
-        SendData((addr & 0x0000FF));
-
         for(i=0; i < step_bytes; i++)
         {
+            if(i % 256 == 0)
+            {
+                int tmpaddr = addr + i;
+                GPIOA->BSRRL = (1<<4);
+                GPIOA->BSRRH = (1<<4);
+
+                SendData(0x3); // Read command
+                // Address to read from
+                SendData((tmpaddr & 0xFF0000) >> 16);
+                SendData((tmpaddr & 0x00FF00) >> 8);
+                SendData((tmpaddr & 0x0000FF));
+            }
             data[i] = SendData(0xa9);
         }
 
         /* Disable SPI before sending log messages.
          * This is required because sending logs appear to maybe cause writes to the SPI storage
          * and pebble crashes if SPI is somehow active and running when this happens */
-        SPI1->CR1 &= ~(uint16_t)(1<<6);
         GPIOA->BSRRL = (1<<4);
         RCC->AHB1ENR &= ~(uint32_t)(1<<0);
         RCC->APB2ENR &= ~(uint32_t)(1<<12);
