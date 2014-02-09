@@ -1,0 +1,17 @@
+{
+  "uuid": "f534517e-5bd4-416c-83ac-ab2c615b2f14",
+  "shortName": "DumpPebSPI",
+  "longName": "Dump Pebble SPI Flash",
+  "companyName": "EnJens",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
