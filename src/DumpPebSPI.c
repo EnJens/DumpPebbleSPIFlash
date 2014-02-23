@@ -92,7 +92,7 @@ int main(void) {
                 data[i+16], data[i+17], data[i+18], data[i+19],
                 data[i+20], data[i+21], data[i+22], data[i+23],
                 data[i+24], data[i+25], data[i+26], data[i+27],
-                data[i+28], data[i+29], data[i+39], data[i+31]);
+                data[i+28], data[i+29], data[i+30], data[i+31]);
         }
         // Needed to ensure all the log messages are sent before we start filling the buffer again
         psleep(1000);
